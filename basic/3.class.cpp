@@ -6,9 +6,19 @@ class Box
 {
     // 类成员可以被定义为 public、private 或 protected。默认情况下是定义为 private。
 public:
+    /**
+     * static 关键字来把类成员定义为静态的。当我们声明类的成员为静态时，
+     * 这意味着无论创建多少个类的对象，静态成员都只有一个副本。
+     * 静态成员在类的所有对象中是共享的。
+     **/
+    static int data;
     double length;
     double breadth;
     double height;
+    int getData(void)
+    {
+        return data;
+    }
     double getVolume(void)
     {
         return length * height * breadth;
@@ -27,6 +37,7 @@ public:
      **/
     ~Box();
 };
+int Box::data = 10;
 
 Box::~Box(void)
 {
@@ -51,7 +62,7 @@ class Line
 {
 public:
     int getLength(void);
-    Line(int len);         // 简单的构造函数
+    Line(int len); // 简单的构造函数
     /**
      * 拷贝构造函数是一种特殊的构造函数，它在创建对象时，是使用同一类中之前创建的对象来初始化新创建的对象。拷贝构造函数通常用于：
      * 通过使用另一个同类型的对象来初始化新创建的对象。
@@ -59,12 +70,49 @@ public:
      * 在类中没有定义拷贝构造函数，编译器会自行定义一个。
      * 如果类带有指针变量，并有动态内存分配，则它必须有一个拷贝构造函数。
      **/
-    Line(const Line &obj); // 拷贝构造函数
-    ~Line();               // 析构函数
+    Line(const Line &obj);           // 拷贝构造函数
+    ~Line();                         // 析构函数
+    friend void printLen(Line line); // 友元函数，可以访问private protected数据
 
 private:
     int *ptr;
 };
+
+// 请注意：printWidth() 不是任何类的成员函数
+void printLen(Line line)
+{
+    cout << "call friend method access private value:" << *line.ptr << endl;
+}
+// 成员函数定义，包括构造函数
+Line::Line(int len)
+{
+    cout << "call inti construct" << endl;
+    ptr = new int; // 定义整数指针
+    *ptr = len;
+}
+
+Line::Line(const Line &obj)
+{
+    cout << "call copy construct" << endl;
+    ptr = new int;
+    *ptr = *obj.ptr;
+}
+
+Line::~Line()
+{
+    cout << "dele memory" << endl;
+    delete ptr; // 是否内存
+}
+
+int Line::getLength(void)
+{
+    return *ptr;
+}
+
+void display(Line obj)
+{
+    cout << "line 大小:" << obj.getLength() << endl;
+}
 
 int main()
 {
@@ -96,5 +144,16 @@ int main()
 
     Box Box3(1, 2, 3);
     cout << "Box3 的体积：" << Box3.getVolume2() << endl;
+    Box *ptrBox; // 定义对象指针
+    ptrBox = &Box3;
+    cout << "通过指针访问类Box3 的体积：" << ptrBox->getVolume() << endl;
+    cout << "通过指针访问类Box3 的静态变量：" << Box3.getData() << endl;
+    Line line1(10);
+
+    Line line2 = line1; // 这里也调用了拷贝构造函数
+
+    display(line1);
+    display(line2);
+    printLen(line1);
     return 0;
 }
