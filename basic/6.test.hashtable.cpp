@@ -1,5 +1,5 @@
-#include "alg/hashtable.h"
 #include <iostream>
+#include "../struct/hashtable.h"
 int main()
 {
     string hashIndex;
