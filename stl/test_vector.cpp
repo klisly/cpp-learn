@@ -1,6 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <istream>
 using namespace std;
+
+size_t count_calls()
+{
+    static size_t ctr = 0;
+    ++ctr;
+    return ctr * ctr;
+}
 int main()
 {
     vector<int> vec;
@@ -21,6 +29,10 @@ int main()
     {
         cout << "value of v = " << *v << endl;
         v++;
+    }
+    for (int i = 0; i < 100; ++i)
+    {
+        cout << "iter " << count_calls() << endl;
     }
     return 0;
 }
